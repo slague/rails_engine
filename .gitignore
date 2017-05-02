@@ -42,4 +42,5 @@ bower.json
 
 # Ignore Byebug command history file.
 .byebug_history
-coverage/
+coverage
+log
