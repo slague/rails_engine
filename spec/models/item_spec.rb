@@ -5,12 +5,26 @@ RSpec.describe Item do
 
   before do
     @merchant = create :merchant
-    @item1 = Item.create(name: 'Hot dog', description: 'Um...', unit_price: 1000, merchant_id: merchant.id)
-    @item2 = Item.new(description: 'Um...', unit_price: 1000, merchant_id: merchant.id)
-    @item3 = Item.new(name: 'Hot dog', unit_price: 1000, merchant_id: merchant.id)
-    @item4 = Item.new(name: 'Hot dog', description: 'Um...', merchant_id: merchant.id)
-    @item5 = Item.new(name: 'Hot dog', description: 'Um...', unit_price: 1000)
-    @item6 = Item.new(name: 'Hot dog', description: 'Um...', unit_price: 1000, merchant_id: merchant.id)
+    @item1 = Item.create(name: 'Hot dog',
+                         description: 'Um...',
+                         unit_price: 1000,
+                         merchant_id: merchant.id)
+    @item2 = Item.new(description: 'Um...',
+                      unit_price: 1000,
+                      merchant_id: merchant.id)
+    @item3 = Item.new(name: 'Hot dog',
+                      unit_price: 1000,
+                      merchant_id: merchant.id)
+    @item4 = Item.new(name: 'Hot dog',
+                      description: 'Um...',
+                      merchant_id: merchant.id)
+    @item5 = Item.new(name: 'Hot dog',
+                      description: 'Um...',
+                      unit_price: 1000)
+    @item6 = Item.new(name: 'Hot dog',
+                      description: 'Um...',
+                      unit_price: 1000,
+                      merchant_id: merchant.id)
   end
 
   context 'validations' do
