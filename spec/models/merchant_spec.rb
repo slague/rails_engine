@@ -28,13 +28,6 @@ RSpec.describe Merchant do
 
       expect(merchant).to_not be_valid
     end
-
-    it 'is invalid with a duplicate name' do
-      Merchant.create(name: "seller person", created_at: time, updated_at: time)
-      merchant = Merchant.new(name: "seller person", created_at: time, updated_at: time)
-
-      expect(merchant).to_not be_valid
-    end
   end
 
   context 'relationships' do

@@ -75,6 +75,63 @@ describe 'Merchants API' do
       expect(new_merchant.updated_at).to eq(time)
     end
 
+    it 'can find all merchants by id' do
+      create :merchant, id: 1
+      create :merchant, id: 2
+
+      get '/api/v1/merchants/find_all?id=1'
+
+      result = JSON.parse(response.body)
+      expect(result[0]['id']).to eq 1
+      expect(result.count).to eq 1
+    end
+
+    it 'can find all merchants by name' do
+      create :merchant, name: 'Sam'
+      create :merchant, name: 'Sam'
+      create :merchant, name: 'Stephanie'
+
+      get '/api/v1/merchants/find_all?name=Sam'
+
+      result = JSON.parse(response.body)
+      expect(result[0]['name']).to eq 'Sam'
+      expect(result[1]['name']).to eq 'Sam'
+      expect(result.count).to eq 2
+    end
+
+    it 'can find all merchants by created_at' do
+      create :merchant, created_at: time
+      create :merchant, created_at: time
+      create :merchant, created_at: time + 1
+
+      get '/api/v1/merchants/find_all?created_at='+ time.to_s
+
+      result = JSON.parse(response.body)
+      merchants = result.map do |result|
+        Merchant.find(result['id'])
+      end
+
+      expect(merchants[0]['created_at']).to eq time
+      expect(merchants[1]['created_at']).to eq time
+      expect(merchants.count).to eq 2
+    end
+
+    it 'can find all merchants by updated_at' do
+      merchant = create :merchant, updated_at: time
+      merchant = create :merchant, updated_at: time
+      merchant = create :merchant, updated_at: time + 1
+
+      get '/api/v1/merchants/find_all?updated_at='+ time.to_s
+
+      result = JSON.parse(response.body)
+      merchants = result.map do |result|
+        Merchant.find(result['id'])
+      end
+
+      expect(merchants[0]['updated_at']).to eq time
+      expect(merchants[1]['updated_at']).to eq time
+      expect(merchants.count).to eq 2
+    end
   end
 
   context 'business intelligence end points' do
