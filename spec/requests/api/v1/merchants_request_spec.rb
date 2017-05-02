@@ -2,7 +2,11 @@ require 'rails_helper'
 
 describe 'Merchants API' do
   context 'record end points' do
-	  it 'sends all merchants' do
+    attr_reader :time
+    before do
+      @time = DateTime.new(2017,5,1,20,13,20)
+	  end
+    it 'sends all merchants' do
 	    original_merchants = create_list(:merchant, 2)
 
 	    get '/api/v1/merchants.json'
@@ -32,14 +36,52 @@ describe 'Merchants API' do
 	    expect(response_merchant).to_not have_key 'created_at'
 	    expect(response_merchant).to_not have_key 'updated_at'
 	  end
+
+    it 'can find a merchant by id' do
+      create :merchant, id: 1
+      get '/api/v1/merchants/find?id=1'
+
+      result = JSON.parse(response.body)
+
+      expect(result['id']).to eq(1)
+    end
+
+    it 'can find a merchant by name' do
+      create :merchant, name: "person"
+      get '/api/v1/merchants/find?name=person'
+
+      result = JSON.parse(response.body)
+
+      expect(result['name']).to eq('person')
+    end
+
+    it 'can find a merchant by created_at' do
+      create :merchant, created_at: time
+      get '/api/v1/merchants/find?created_at='+ time.to_s
+
+      result = JSON.parse(response.body)
+      new_merchant = Merchant.find(result['id'])
+
+      expect(new_merchant.created_at).to eq(time)
+    end
+
+    it 'can find a merchant by updated_at' do
+      create :merchant, updated_at: time
+      get '/api/v1/merchants/find?updated_at=' + time.to_s
+
+      result = JSON.parse(response.body)
+      new_merchant = Merchant.find(result['id'])
+
+      expect(new_merchant.updated_at).to eq(time)
+    end
+
   end
 
   context 'business intelligence end points' do
-    it 'returns the top x merchants ranked by total revenue' do
+    xit 'returns the top x merchants ranked by total revenue' do
 
 
     end
 
   end
-
 end
