@@ -3,7 +3,7 @@ require 'rails_helper'
 describe 'Merchants API' do
   context 'record end points' do
 	  it 'sends all merchants' do
-	    create_list(:merchant, 2)
+	    original_merchants = create_list(:merchant, 2)
 
 	    get '/api/v1/merchants.json'
 
@@ -13,7 +13,7 @@ describe 'Merchants API' do
 	    merchant = merchants.first
 
 	    expect(merchants.count).to eq 2
-	    expect(merchant['name']).to eq 'Merchant #1'
+	    expect(merchant['name']).to eq original_merchants.first.name
 	    expect(merchant).to_not have_key 'created_at'
 	    expect(merchant).to_not have_key 'updated_at'
 	  end
