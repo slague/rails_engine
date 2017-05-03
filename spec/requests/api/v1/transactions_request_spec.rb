@@ -81,10 +81,9 @@ describe 'Transactions API' do
       expect(result['result']).to eq('success')
     end
 
-
     it 'can find a transaction by created_at' do
       create :transaction, created_at: time
-      get '/api/v1/transactions/find?created_at='+ time.to_s
+      get '/api/v1/transactions/find?created_at=' + time.to_s
 
       result = JSON.parse(response.body)
       transaction1 = Transaction.find(result['id'])
@@ -103,20 +102,20 @@ describe 'Transactions API' do
     end
 
     it 'can find a random transaction' do
-      transactionA = create :transaction
-      transactionB = create :transaction
+      transaction1 = create :transaction
+      transaction2 = create :transaction
       get '/api/v1/transactions/random'
 
       expect(response).to be(success)
 
       response_transaction = JSON.parse(response.body)
 
-      if response_transaction['id'] == transactionA.id
-        expect(response_transaction.result).to eq(transactionA.result)
-        expect(response_transaction.credit_card_number).to eq(transactionA.credit_card_number)
-      elsif response_transcation['id'] == transactionB.id
-        expect(response_transaction.result).to eq(transactionB.result)
-        expect(response_transaction.credit_card_number).to eq(transactionB.credit_card_number)
+      if response_transaction['id'] == transaction1.id
+        expect(response_transaction.result).to eq(transaction1.result)
+        expect(response_transaction.credit_card_number).to eq(transaction1.credit_card_number)
+      elsif response_transcation['id'] == transaction2.id
+        expect(response_transaction.result).to eq(transaction2.result)
+        expect(response_transaction.credit_card_number).to eq(transaction2.credit_card_number)
       else
         expect('uh oh').to eq('This should not happen')
       end
