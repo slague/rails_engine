@@ -111,10 +111,10 @@ describe 'Transactions API' do
 
       response_transaction = JSON.parse(response.body)
 
-	    if response_transaction['id'] == transactionA.id
+      if response_transaction['id'] == transactionA.id
         expect(response_transaction.result).to eq(transactionA.result)
         expect(response_transaction.credit_card_number).to eq(transactionA.credit_card_number)
-	    elsif response_transcation['id'] == transactionB.id
+      elsif response_transcation['id'] == transactionB.id
         expect(response_transaction.result).to eq(transactionB.result)
         expect(response_transaction.credit_card_number).to eq(transactionB.credit_card_number)
       else
