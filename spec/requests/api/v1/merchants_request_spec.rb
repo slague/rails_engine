@@ -13,8 +13,6 @@ describe 'Merchants API' do
 
       get '/api/v1/merchants.json'
 
-      expect(response).to be_success
-
       merchants = JSON.parse response.body
       merchant = merchants.first
 
@@ -48,8 +46,8 @@ describe 'Merchants API' do
       expect(result['id']).to eq(1)
     end
 
-    it 'can find a merchant by status' do
-      create :merchant, name: 'person'
+    it 'can find a merchant by name' do
+      create :merchant, name: "person"
       get '/api/v1/merchants/find?name=person'
 
       result = JSON.parse(response.body)
@@ -75,6 +73,24 @@ describe 'Merchants API' do
       new_merchant = Merchant.find(result['id'])
 
       expect(new_merchant.updated_at).to eq(time)
+    end
+
+    it 'can find a random merchant' do
+      merchant1 = create :merchant
+      merchant2 = create :merchant
+      get '/api/v1/merchants/random'
+
+      expect(response).to be_success
+
+      response_merchant = JSON.parse(response.body)
+
+      if response_merchant['id'] == merchant1.id
+        expect(response_merchant['name']).to eq(merchant1.name)
+      elsif response_merchant['id'] == merchant2.id
+        expect(response_merchant['name']).to eq(merchant2.name)
+      else
+        expect('uh oh').to eq('This should not happen')
+      end
     end
 
     it 'can find all merchants by id' do
@@ -138,6 +154,13 @@ describe 'Merchants API' do
 
   context 'business intelligence end points' do
     xit 'returns the top x merchants ranked by total revenue' do
+      Merchant.sum('i.unit_price * ii.quantity').join(:invoices).join(:invoice_items, as: 'ii').join(:items, as: 'i')
+      # Revenue -> Merchant's.invoices.each.invoice_items.each -> quantity
+      # Merchant.find_by_s
+      # Revenue -> Merchant's.invoices.each.invoice_items.each.item -> unit_price
+      # revenue = ( quanitity * unit_price )
+
+      # Merchant.order(:revenue, order: :desc).limito(x)
     end
   end
 end
