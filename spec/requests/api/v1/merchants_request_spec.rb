@@ -1,36 +1,41 @@
 require 'rails_helper'
 
 describe 'Merchants API' do
-  it 'sends all merchants' do
-    create_list(:merchant, 2)
+  context 'record end points' do
+    attr_reader :time
 
-    get '/api/v1/merchants.json'
+    before do
+      @time = DateTime.new(2017, 5, 1, 20, 13, 20)
+    end
 
-    expect(response).to be_success
+    it 'sends all merchants' do
+      original_merchants = create_list(:merchant, 2)
 
-	    merchants = JSON.parse response.body
-	    merchant = merchants.first
+      get '/api/v1/merchants.json'
 
-	    expect(merchants.count).to eq 2
-	    expect(merchant['name']).to eq original_merchants.first.name
-	    expect(merchant).to_not have_key 'created_at'
-	    expect(merchant).to_not have_key 'updated_at'
-	  end
+      merchants = JSON.parse response.body
+      merchant = merchants.first
 
-	  it 'can show one merchant' do
-	    merchant = create :merchant
+      expect(merchants.count).to eq 2
+      expect(merchant['name']).to eq original_merchants.first.name
+      expect(merchant).to_not have_key 'created_at'
+      expect(merchant).to_not have_key 'updated_at'
+    end
 
-	    get "/api/v1/merchants/#{merchant.id}.json"
+    it 'can show one merchant' do
+      merchant = create :merchant
 
-	    expect(response).to be_success
+      get "/api/v1/merchants/#{merchant.id}.json"
 
-	    response_merchant = JSON.parse response.body
+      expect(response).to be_success
 
-	    expect(response_merchant['id']).to eq merchant.id
-	    expect(response_merchant['name']).to eq merchant.name
-	    expect(response_merchant).to_not have_key 'created_at'
-	    expect(response_merchant).to_not have_key 'updated_at'
-	  end
+      response_merchant = JSON.parse response.body
+
+      expect(response_merchant['id']).to eq merchant.id
+      expect(response_merchant['name']).to eq merchant.name
+      expect(response_merchant).to_not have_key 'created_at'
+      expect(response_merchant).to_not have_key 'updated_at'
+    end
 
     it 'can find a merchant by id' do
       create :merchant, id: 1
@@ -155,12 +160,7 @@ describe 'Merchants API' do
       # Revenue -> Merchant's.invoices.each.invoice_items.each.item -> unit_price
       # revenue = ( quanitity * unit_price )
 
-      # Merchant.order(:revenue, order: :desc).limit(x)
+      # Merchant.order(:revenue, order: :desc).limito(x)
     end
-
-    expect(merchants.count).to eq 2
-    expect(merchant['name']).to eq 'Merchant #1'
-    expect(merchant['created_at']).to eq '2017-05-01T20:13:20.000Z'
-    expect(merchant['updated_at']).to eq '2017-05-01T20:13:20.000Z'
   end
 end
