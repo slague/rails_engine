@@ -149,8 +149,13 @@ describe 'Merchants API' do
 
   context 'business intelligence end points' do
     xit 'returns the top x merchants ranked by total revenue' do
+      Merchant.sum('i.unit_price * ii.quantity').join(:invoices).join(:invoice_items, as: 'ii').join(:items, as: 'i')
+      # Revenue -> Merchant's.invoices.each.invoice_items.each -> quantity
+      # Merchant.find_by_s
+      # Revenue -> Merchant's.invoices.each.invoice_items.each.item -> unit_price
+      # revenue = ( quanitity * unit_price )
 
-
+      # Merchant.order(:revenue, order: :desc).limit(x)
     end
 
     expect(merchants.count).to eq 2
