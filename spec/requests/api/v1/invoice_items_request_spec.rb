@@ -5,7 +5,7 @@ describe 'InvoiceItem API' do
     attr_reader :invoice_item1, :invoice_item2, :time
 
     before do
-      @time = DateTime.new(2017, 5, 1, 20, 13, 20)
+      @time = DateTime.new(2016, 5, 1, 20, 13, 20)
       @invoice_item1, @invoice_item2 = create_list(:invoice_item, 2)
     end
 
@@ -39,7 +39,7 @@ describe 'InvoiceItem API' do
       expect(invoice_item['quantity']).to eq(invoice_item1.quantity)
       expect(invoice_item['unit_price']).to eq(invoice_item1.unit_price)
 
-      expect(response.body).to_not include invoice_item2.id
+      expect(response.body).to_not include 'invoice_item2.id'
     end
 
     it 'can find a invoice_item by id' do
@@ -64,16 +64,15 @@ describe 'InvoiceItem API' do
       expect(result['unit_price']).to eq(2000)
     end
 
-    it 'can find a invoice_item by quantity' do
-      quantity = 22
-      create :invoice_item, quantity: quantity
+    it 'can find an invoice_item by quantity' do
+      create :invoice_item, quantity: 22
       create :invoice_item
 
-      get '/api/v1/invoice_items/quantity=' + quantity.to_s
+      get '/api/v1/invoice_items/find?quantity=22'
 
       result = JSON.parse(response.body)
 
-      expect(result['quantity']).to eq(quantity)
+      expect(result['quantity']).to eq(22)
     end
 
     it 'can find a invoice_item by created_at' do
@@ -175,6 +174,7 @@ describe 'InvoiceItem API' do
     end
 
     it 'can return a random record' do
+      DatabaseCleaner.clean
       invoice_item1 = create :invoice_item, quantity: 3
       invoice_item2 = create :invoice_item, quantity: 4
 
@@ -185,9 +185,9 @@ describe 'InvoiceItem API' do
       result = JSON.parse(response.body)
 
       if result['id'] == invoice_item1.id
-        expect(result.quantity).to eq invoice_item1.quantity
+        expect(result['quantity']).to eq(invoice_item1.quantity)
       elsif result['id'] == invoice_item2.id
-        expect(result.quantity).to eq invoice_item2.quantity
+        expect(result['quantity']).to eq(invoice_item2.quantity)
       else
         expect('uh oh').to eq 'This shouldnt happen'
       end
