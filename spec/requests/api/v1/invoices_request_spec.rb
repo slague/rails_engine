@@ -148,6 +148,7 @@ describe 'Invoices API' do
       invoice2 = create :invoice, status: 'pending'
 
       get '/api/v1/invoices/random'
+
       expect(response).to be_success
 
       result = JSON.parse(response.body)
