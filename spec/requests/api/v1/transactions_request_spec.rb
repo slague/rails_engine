@@ -164,11 +164,11 @@ describe 'Transactions API' do
       create :transaction, created_at: time
       create :transaction, created_at: time + 1
 
-      get '/api/v1/transactions/find_all?created_at='+ time.to_s
+      get '/api/v1/transactions/find_all?created_at=' + time.to_s
 
       result = JSON.parse(response.body)
-      transactions_array = result.map do |result|
-        Transaction.find(result['id'])
+      transactions_array = result.map do |transaction|
+        Transaction.find(transaction['id'])
       end
 
       expect(transactions_array[0]['created_at']).to eq time
@@ -181,11 +181,11 @@ describe 'Transactions API' do
       create :transaction, updated_at: time
       create :transaction, updated_at: time + 1
 
-      get '/api/v1/transactions/find_all?updated_at='+ time.to_s
+      get '/api/v1/transactions/find_all?updated_at=' + time.to_s
 
       result = JSON.parse(response.body)
-      transactions_array = result.map do |result|
-        Transaction.find(result['id'])
+      transactions_array = result.map do |transaction|
+        Transaction.find(transaction['id'])
       end
 
       expect(transactions_array[0]['updated_at']).to eq time
