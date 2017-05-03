@@ -22,11 +22,11 @@ namespace :seed do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
 
-    SeedFile.new("merchants", Merchant).import
-    SeedFile.new("items", Item).import
-    SeedFile.new("customers", Customer).import
-    SeedFile.new("invoices", Invoice).import
-    SeedFile.new("invoice_items", InvoiceItem).import
-    SeedFile.new("transactions", Transaction).import
+    SeedFile.new('merchants', Merchant).import
+    SeedFile.new('items', Item).import
+    SeedFile.new('customers', Customer).import
+    SeedFile.new('invoices', Invoice).import
+    SeedFile.new('invoice_items', InvoiceItem).import
+    SeedFile.new('transactions', Transaction).import
   end
 end
