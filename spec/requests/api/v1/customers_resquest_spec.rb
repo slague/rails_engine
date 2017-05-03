@@ -2,19 +2,20 @@ require 'rails_helper'
 
 describe 'Customers API' do
   context 'record end points' do
-    attr_reader :time, :customers
+    attr_reader :time
+
     before do
-      @cutomers = create_list(:customer, 2)
       @time = DateTime.new(2017, 5, 1, 20, 13, 20)
     end
 
     it 'sends all customers' do
+      customers = create_list(:customer, 2)
+
       get '/api/v1/customers.json'
 
       expect(response).to be_success
 
-      customers = JSON.parse response.body
-      customer = customers.first
+      customer = JSON.parse(response.body).first
 
       expect(customers.count).to eq 2
       expect(customer['first_name']).to eq(customers.first.first_name)
@@ -24,15 +25,17 @@ describe 'Customers API' do
     end
 
     it 'can show one customer' do
-      get "/api/v1/customers/#{customers.first.id}.json"
+      original_customer = create :customer
+
+      get "/api/v1/customers/#{original_customer.id}.json"
 
       expect(response).to be_success
 
       customer = JSON.parse(response.body)
 
-      expect(customer['id']).to eq customer.id
-      expect(customer['first_name']).to eq(customer.first_name)
-      expect(customer['last_name']).to eq(customer.last_name)
+      expect(customer['id']).to eq original_customer.id
+      expect(customer['first_name']).to eq(original_customer.first_name)
+      expect(customer['last_name']).to eq(original_customer.last_name)
       expect(customer).to_not have_key 'created_at'
       expect(customer).to_not have_key 'updated_at'
     end
@@ -52,27 +55,28 @@ describe 'Customers API' do
 
       result = JSON.parse(response.body)
 
-      expect(result['first_name']).to eq('Steph')
+      expect(result['first_name']).to eq('steph')
 
       get '/api/v1/customers/find?first_name=Steph'
       result = JSON.parse(response.body)
 
-      expect(result['first_name']).to eq('Steph')
+      expect(result['first_name']).to eq('steph')
     end
 
     it 'can find a customer by last name' do
-      create :customer, last_name: 'Bentey'
+      create :customer, last_name: 'Bentley'
+
       get '/api/v1/customers/find?last_name=Bentley'
 
       result = JSON.parse(response.body)
 
-      expect(result['last_name']).to eq('Bentley')
+      expect(result['last_name']).to eq('bentley')
 
       get '/api/v1/customers/find?last_name=bentley'
 
       result = JSON.parse(response.body)
 
-      expect(result['last_name']).to eq('Bentley')
+      expect(result['last_name']).to eq('bentley')
     end
 
     it 'can find a customer by created_at' do
@@ -100,16 +104,16 @@ describe 'Customers API' do
       customer2 = create :customer
       get '/api/v1/customers/random'
 
-      expect(response).to be(success)
+      expect(response).to be_success
 
       response_customer = JSON.parse(response.body)
 
       if response_customer['id'] == customer1.id
-        expect(response_customer.first_name).to eq(customer1.first_name)
-        expect(response_customer.last_name).to eq(customer1.last_name)
+        expect(response_customer['first_name']).to eq(customer1.first_name)
+        expect(response_customer['last_name']).to eq(customer1.last_name)
       elsif response_customer['id'] == customer2.id
-        expect(response_customer.first_name).to eq(customer2.first_name)
-        expect(response_customer.last_name).to eq(customer2.last_name)
+        expect(response_customer['first_name']).to eq(customer2.first_name)
+        expect(response_customer['last_name']).to eq(customer2.last_name)
       else
         expect('uh oh').to eq('This should not happen')
       end
@@ -134,8 +138,8 @@ describe 'Customers API' do
       get '/api/v1/customers/find_all?first_name=Sam'
 
       result = JSON.parse(response.body)
-      expect(result[0]['first_name']).to eq 'Sam'
-      expect(result[1]['first_name']).to eq 'Sam'
+      expect(result[0]['first_name']).to eq 'sam'
+      expect(result[1]['first_name']).to eq 'sam'
       expect(result.count).to eq 2
     end
 
@@ -147,8 +151,9 @@ describe 'Customers API' do
       get '/api/v1/customers/find_all?last_name=Sam'
 
       result = JSON.parse(response.body)
-      expect(result[0]['last_name']).to eq 'Sam'
-      expect(result[1]['last_name']).to eq 'Sam'
+
+      expect(result[0]['last_name']).to eq 'sam'
+      expect(result[1]['last_name']).to eq 'sam'
       expect(result.count).to eq 2
     end
 
