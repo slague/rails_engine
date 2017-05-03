@@ -59,9 +59,19 @@ ActiveRecord::Schema.define(version: 20170503182042) do
     t.datetime "updated_at"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.integer  "invoice_id"
+    t.bigint   "credit_card_number"
+    t.string   "result"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["invoice_id"], name: "index_transactions_on_invoice_id", using: :btree
+  end
+
   add_foreign_key "invoice_items", "invoices"
   add_foreign_key "invoice_items", "items"
   add_foreign_key "invoices", "customers"
   add_foreign_key "invoices", "merchants"
   add_foreign_key "items", "merchants"
+  add_foreign_key "transactions", "invoices"
 end
