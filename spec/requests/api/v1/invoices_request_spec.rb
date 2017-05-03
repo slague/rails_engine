@@ -148,15 +148,14 @@ describe 'Invoices API' do
       invoice2 = create :invoice, status: 'pending'
 
       get '/api/v1/invoices/random'
-
       expect(response).to be_success
 
       result = JSON.parse(response.body)
 
       if result['id'] == invoice1.id
-        expect(result.status).to eq invoice1.status
+        expect(result['status']).to eq invoice1.status
       elsif result['id'] == invoice2.id
-        expect(result.status).to eq invoice2.status
+        expect(result['status']).to eq invoice2.status
       else
         expect('uh oh').to eq 'This shouldnt happen'
       end
