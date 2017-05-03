@@ -85,7 +85,7 @@ describe 'Item API' do
       get '/api/v1/items/find?description=' + CGI.escape(description.titleize)
 
       result = JSON.parse(response.body)
-
+byebug
       expect(result['description']).to eq('pickle')
     end
 
