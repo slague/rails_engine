@@ -48,28 +48,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.backtrace_clean_patterns = [
-     /\/lib\d*\/ruby\//,
-     /bin\//,
-     /gems/,
-     /spec\/spec_helper\.rb/,
-     /lib\/rspec\/(core|expectations|matchers|mocks)/
-  ]
-
-  config.after_initialize do
-    Bullet.enable = true
-    Bullet.alert = true
-    Bullet.bullet_logger = true
-    Bullet.console = true
-    Bullet.growl = true
-    Bullet.rails_logger = true
-    Bullet.honeybadger = true
-    Bullet.bugsnag = true
-    Bullet.airbrake = true
-    Bullet.rollbar = true
-    Bullet.add_footer = true
-  end
-
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
