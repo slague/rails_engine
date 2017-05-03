@@ -5,7 +5,7 @@ describe 'Item API' do
     attr_reader :item1, :item2, :merchant, :time
 
     before do
-      @time = DateTime.new(2017, 5, 1, 20, 13, 20)
+      @time = DateTime.new(2018, 5, 1, 20, 13, 20)
       @merchant = create(:merchant)
       @item1, @item2 = create_list(:item, 2)
       merchant.items << [item1, item2]
@@ -43,7 +43,7 @@ describe 'Item API' do
       expect(response.body).to_not include item2.name
     end
 
-    it 'can find a item by id' do
+    it 'can find an item by id' do
       create :item, id: 1
       create :item
 
@@ -54,7 +54,7 @@ describe 'Item API' do
       expect(result['id']).to eq(1)
     end
 
-    it 'can find a item by name' do
+    it 'can find an item by name' do
       create :item, name: 'pickle'
       create :item
 
@@ -76,13 +76,13 @@ describe 'Item API' do
       create :item, description: description
       create :item
 
-      get '/api/v1/items/find?description=' + CGI.escape description
+      get '/api/v1/items/find?description=' + CGI.escape(description)
 
       result = JSON.parse(response.body)
 
       expect(result['description']).to eq(description)
 
-      get '/api/v1/items/find?description=' + CGI.escape description.titleize
+      get '/api/v1/items/find?description=' + CGI.escape(description.titleize)
 
       result = JSON.parse(response.body)
 
@@ -113,7 +113,7 @@ describe 'Item API' do
       expect(result['unit_price'].to_i).to eq(unit_price)
     end
 
-    it 'can find a item by created_at' do
+    it 'can find an item by created_at' do
       create :item, created_at: time
       create :item
 
@@ -125,7 +125,7 @@ describe 'Item API' do
       expect(new_item.created_at).to eq(time)
     end
 
-    it 'can find a item by updated_at' do
+    it 'can find an item by updated_at' do
       create :item, updated_at: time
       create :item
 
@@ -174,14 +174,14 @@ describe 'Item API' do
       create :item, description: description
       create :item, description: 'a different description'
 
-      get '/api/v1/items/find_all?description=' + CGI.escape description
+      get '/api/v1/items/find_all?description=' + CGI.escape(description)
 
       result = JSON.parse(response.body)
       expect(result[0]['description']).to eq description
       expect(result[1]['description']).to eq description
       expect(result.count).to eq 2
 
-      get '/api/v1/items/find_all?description=' + CGI.escape description.titleize
+      get '/api/v1/items/find_all?description=' + CGI.escape(description.titleize)
 
       result = JSON.parse(response.body)
       expect(result[0]['description']).to eq description
@@ -226,10 +226,9 @@ describe 'Item API' do
     end
 
     it 'can find all items by created_at' do
-      create :item, created_at: time
-      create :item, created_at: time
-
-      create :item, created_at: time + 1
+      create :item, created_at: time, name: "BIG item"
+      create :item, created_at: time, name: "ANOTHER item"
+      create :item, created_at: time + 1, name: "HELLO"
 
       get '/api/v1/items/find_all?created_at=' + time.to_s
 
@@ -263,6 +262,7 @@ describe 'Item API' do
     it 'can return a random record' do
       item1 = create :item, name: 'shark'
       item2 = create :item, name: 'octoshark'
+      item_names = [item1.name, item2.name]
 
       get '/api/v1/items/random'
 
@@ -270,13 +270,8 @@ describe 'Item API' do
 
       result = JSON.parse(response.body)
 
-      if result['id'] == item1.id
-        expect(result.name).to eq item1.name
-      elsif result['id'] == item2.id
-        expect(result.name).to eq item2.name
-      else
-        expect('uh oh').to eq 'This shouldnt happen'
-      end
+      expect(item_names).to include(result['name'])
+
     end
   end
 end

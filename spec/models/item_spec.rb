@@ -33,10 +33,6 @@ RSpec.describe Item do
     it { expect(item3).to_not be_valid }
     it { expect(item4).to_not be_valid }
     it { expect(item5).to_not be_valid }
-
-    it 'has a unique name' do
-      expect(item6).to_not be_valid
-    end
   end
 
   context 'relationships' do
