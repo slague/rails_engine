@@ -10,8 +10,8 @@ describe 'Transactions API' do
 
     it 'sends all transactions' do
       original_transactions = create_list(:transaction, 2)
-	    transaction1 = original_transactions.first
-	    transaction2 = original_transactions.last
+      transaction1 = original_transactions.first
+      transaction2 = original_transactions.last
 
       get '/api/v1/transactions.json'
 
@@ -19,37 +19,36 @@ describe 'Transactions API' do
 
       transactions = JSON.parse response.body
 
-	    expect(transactions.count).to eq 2
+      expect(transactions.count).to eq 2
 
-	    expect(transactions.first['result']).to eq transaction1.result
-	    expect(transactions.first['credit_card_number']).to eq transaction1.credit_card_number
-	    expect(transactions.first).to_not have_key 'created_at'
-	    expect(transactions.first).to_not have_key 'updated_at'
+      expect(transactions.first['result']).to eq transaction1.result
+      expect(transactions.first['credit_card_number']).to eq transaction1.credit_card_number
+      expect(transactions.first).to_not have_key 'created_at'
+      expect(transactions.first).to_not have_key 'updated_at'
 
 
-	    expect(transactions.last['result']).to eq transaction2.result
-	    expect(transactions.last['credit_card_number']).to eq transaction2.credit_card_number
-	    expect(transactions.last).to_not have_key 'created_at'
-	    expect(transactions.last).to_not have_key 'updated_at'
+      expect(transactions.last['result']).to eq transaction2.result
+      expect(transactions.last['credit_card_number']).to eq transaction2.credit_card_number
+      expect(transactions.last).to_not have_key 'created_at'
+      expect(transactions.last).to_not have_key 'updated_at'
     end
 
     it 'returns one transaction' do
       transactions = create_list(:transaction, 2)
       transaction = transactions.first
 
-	    get "/api/v1/transactions/#{transaction.id}.json"
+      get "/api/v1/transactions/#{transaction.id}.json"
 
-	    expect(response).to be_success
+      expect(response).to be_success
 
-	    response_transaction = JSON.parse response.body
+      response_transaction = JSON.parse response.body
 
-	    expect(response_transaction['id']).to eq transaction.id
-	    expect(response_transaction['result']).to eq transaction.result
-	    expect(response_transaction['credit_card_number']).to eq transaction.credit_card_number
-	    expect(response_transaction).to_not have_key 'created_at'
-	    expect(response_transaction).to_not have_key 'updated_at'
-	  end
-
+      expect(response_transaction['id']).to eq transaction.id
+      expect(response_transaction['result']).to eq transaction.result
+      expect(response_transaction['credit_card_number']).to eq transaction.credit_card_number
+      expect(response_transaction).to_not have_key 'created_at'
+      expect(response_transaction).to_not have_key 'updated_at'
+    end
 
     it 'can find a transaction by id' do
       create :transaction, id: 1
