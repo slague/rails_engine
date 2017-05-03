@@ -57,7 +57,7 @@ describe 'Merchants API' do
 
     it 'can find a merchant by created_at' do
       create :merchant, created_at: time
-      get '/api/v1/merchants/find?created_at='+ time.to_s
+      get '/api/v1/merchants/find?created_at=' + time.to_s
 
       result = JSON.parse(response.body)
       new_merchant = Merchant.find(result['id'])
@@ -76,18 +76,18 @@ describe 'Merchants API' do
     end
 
     it 'can find a random merchant' do
-      merchant1= create :merchant
+      merchant1 = create :merchant
       merchant2 = create :merchant
       get '/api/v1/merchants/random'
 
-      expect(response).to be(success)
+      expect(response).to be_success
 
       response_merchant = JSON.parse(response.body)
 
       if response_merchant['id'] == merchant1.id
-        expect(response_merchant.result).to eq(merchant1.name)
+        expect(response_merchant['name']).to eq(merchant1.name)
       elsif response_merchant['id'] == merchant2.id
-        expect(response_merchant.result).to eq(merchant2.name)
+        expect(response_merchant['name']).to eq(merchant2.name)
       else
         expect('uh oh').to eq('This should not happen')
       end
@@ -122,11 +122,11 @@ describe 'Merchants API' do
       create :merchant, created_at: time
       create :merchant, created_at: time + 1
 
-      get '/api/v1/merchants/find_all?created_at='+ time.to_s
+      get '/api/v1/merchants/find_all?created_at=' + time.to_s
 
       result = JSON.parse(response.body)
-      merchants = result.map do |result|
-        Merchant.find(result['id'])
+      merchants = result.map do |merchant|
+        Merchant.find(merchant['id'])
       end
 
       expect(merchants[0]['created_at']).to eq time
@@ -135,15 +135,15 @@ describe 'Merchants API' do
     end
 
     it 'can find all merchants by updated_at' do
-      merchant = create :merchant, updated_at: time
-      merchant = create :merchant, updated_at: time
-      merchant = create :merchant, updated_at: time + 1
+      create :merchant, updated_at: time
+      create :merchant, updated_at: time
+      create :merchant, updated_at: time + 1
 
-      get '/api/v1/merchants/find_all?updated_at='+ time.to_s
+      get '/api/v1/merchants/find_all?updated_at=' + time.to_s
 
       result = JSON.parse(response.body)
-      merchants = result.map do |result|
-        Merchant.find(result['id'])
+      merchants = result.map do |merchant|
+        Merchant.find(merchant['id'])
       end
 
       expect(merchants[0]['updated_at']).to eq time

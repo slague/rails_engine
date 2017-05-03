@@ -12,5 +12,6 @@ class Api::V1::MerchantsController < ApplicationController
     return render json: Merchant.find_by(name: params[:name]) if params[:name]
     return render json: Merchant.find_by(created_at: params[:created_at].to_datetime) if params[:created_at]
     return render json: Merchant.find_by(updated_at: params[:updated_at].to_datetime) if params[:updated_at]
+    return render json: Merchant.order('RANDOM()').first if response.request.fullpath.include? 'random'
   end
 end
