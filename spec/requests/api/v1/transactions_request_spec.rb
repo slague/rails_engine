@@ -2,14 +2,15 @@ require 'rails_helper'
 
 describe 'Transactions API' do
   context 'record end points' do
+    attr_reader :time
 
-    attr_reader :transactions, :time
     before do
-      @transactions = create_list(:transaction, 2)
-      @time = DateTime.new(2017,5,1,20,13,20)
+      @time = DateTime.new(2018, 5, 1, 20, 13, 20)
     end
 
     it 'sends all transactions' do
+      transactions = create_list(:transaction, 2)
+
 	    get '/api/v1/transactions.json'
 
 	    expect(response).to be_success
@@ -33,7 +34,6 @@ describe 'Transactions API' do
     end
 
     it 'returns one transaction' do
-
 	    get "/api/v1/transactions/#{transactions.first.id}.json"
 
 	    expect(response).to be_success
@@ -125,7 +125,7 @@ describe 'Transactions API' do
       create :transaction, id: 1
       create :transaction, id: 2
 
-      get '/api/v1/transations/find_all?id=1'
+      get '/api/v1/transactions/find_all?id=1'
 
       result = JSON.parse(response.body)
       expect(result[0]['id']).to eq 1
@@ -153,8 +153,8 @@ describe 'Transactions API' do
       get '/api/v1/transactions/find_all?result=success'
 
       result = JSON.parse(response.body)
-      expect(result[0]['result']).to eq('succes')
-      expect(result[1]['result']).to eq('succes')
+      expect(result[0]['result']).to eq('success')
+      expect(result[1]['result']).to eq('success')
       expect(result.count).to eq 2
     end
 
