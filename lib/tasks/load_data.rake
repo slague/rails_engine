@@ -9,7 +9,8 @@ class SeedFile
   end
 
   def import
-    CSV.foreach(Rails.root.to_s + '/db/csv/' + path + '.csv', headers: true) do |row|
+    file_path = Rails.root.to_s + '/db/csv/' + path + '.csv'
+    CSV.foreach(file_path, headers: true) do |row|
       row.delete('id')
       model.create!(row.to_h)
     end
@@ -22,6 +23,6 @@ namespace :seed do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
 
-    SeedFile.new("merchants", Merchant).import
+    SeedFile.new('merchants', Merchant).import
   end
 end

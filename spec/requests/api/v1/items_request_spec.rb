@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-
 describe 'Item API' do
   context 'record end points' do
     attr_reader :item1, :item2, :merchant
+
     before do
       @merchant = create(:merchant)
       @item1, @item2 = create_list(:item, 2)
