@@ -45,4 +45,12 @@ FactoryGirl.define do
     created_at DateTime.new(2017, 5, 1, 20, 13, 20)
     updated_at DateTime.new(2017, 5, 1, 20, 13, 20)
   end
+
+  factory :transaction do
+    invoice
+    credit_card_number 4800749911485986
+    result 'success'
+    created_at DateTime.new(2017, 5, 1, 20, 13, 20)
+    updated_at DateTime.new(2017, 5, 1, 20, 13, 20)
+  end
 end
