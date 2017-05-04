@@ -49,17 +49,22 @@ RSpec.describe Merchant do
 
   context 'instance methods' do
     it 'knows its revenue' do
+      transaction = create :transaction
+
       invoice1 = create :invoice
       invoice1.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
       invoice1.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice1.transactions << transaction
+
       invoice2 = create :invoice
       invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
       invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+
       merchant = create :merchant, invoices: [invoice1, invoice2]
 
       revenue = merchant.revenue
 
-      expect(revenue).to eq 60000
+      expect(revenue).to eq 30000
     end
   end
 end

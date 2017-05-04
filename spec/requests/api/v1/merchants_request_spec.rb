@@ -153,14 +153,57 @@ describe 'Merchants API' do
   end
 
   context 'business intelligence end points' do
-    xit 'returns the top x merchants ranked by total revenue' do
-      Merchant.sum('i.unit_price * ii.quantity').join(:invoices).join(:invoice_items, as: 'ii').join(:items, as: 'i')
-      # Revenue -> Merchant's.invoices.each.invoice_items.each -> quantity
-      # Merchant.find_by_s
-      # Revenue -> Merchant's.invoices.each.invoice_items.each.item -> unit_price
-      # revenue = ( quanitity * unit_price )
+    attr_reader :merchant1, :merchant2, :merchant3
 
-      # Merchant.order(:revenue, order: :desc).limito(x)
+    before do
+      transaction = create :transaction
+      invoice = create :invoice
+      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice.transactions << transaction
+
+      @merchant1 = create :merchant, invoices: [invoice]
+
+      transaction = create :transaction
+      invoice = create :invoice
+      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
+      invoice.transactions << transaction
+
+      @merchant2 = create :merchant, invoices: [invoice]
+
+      transaction = create :transaction
+      invoice = create :invoice
+      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
+      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
+      invoice.transactions << transaction
+
+      @merchant3 = create :merchant, invoices: [invoice]
+    end
+
+    it 'returns the top x merchants ranked by total revenue' do
+      get '/api/v1/merchants/most_revenue?quantity=2'
+
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+
+      top_merchants = result.map do |merchant|
+        Merchant.find(merchant['id'])
+      end
+
+      expect(top_merchants).to include merchant3
+      expect(top_merchants).to include merchant2
+      expect(top_merchants).to_not include merchant1
+    end
+
+    it 'returns a merchants revenue' do
+      get "/api/v1/merchants/#{merchant1.id}/revenue.json"
+
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+
+      expect(result).to eq merchant1.revenue
     end
   end
 end
