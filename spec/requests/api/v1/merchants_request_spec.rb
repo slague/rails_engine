@@ -210,35 +210,27 @@ describe 'Merchants API' do
 
       result = JSON.parse(response.body)
 
-      expect(result['id']).to eq merchant2.id
-      expect(result['name']).to eq merchant2.name
       expect(result['revenue']).to eq merchant2.revenue
     end
 
     it 'returns a merchants revenue on a given day' do
-
       get "/api/v1/merchants/#{merchant1.id}/revenue?date=2017-05-01"
 
       expect(response).to be_success
 
       result = JSON.parse(response.body)
 
-      expect(result['name']).to eq(merchant1.name)
-      expect(result['revenue']).to eq(30000)
-      expect(result['id']).to eq(merchant1.id)
+      expect(result['revenue']).to eq('300.00')
     end
 
     it 'returns every merchants revenue on a given date' do
+      revenue = (merchant2.revenue.to_f + merchant3.revenue.to_f).round(2).to_s
       get '/api/v1/merchants/most_revenue?date=2017-03-31'
 
       expect(response).to be_success
 
       result = JSON.parse(response.body)
-      expect(result.count).to eq(2)
-      expect(result.first['name']).to eq(merchant3.name)
-      expect(result.last['name']).to eq(merchant2.name)
-      expect(result.first['revenue']).to eq(merchant3.revenue)
-      expect(result.last['revenue']).to eq(merchant2.revenue)
+      expect(result['revenue']).to eq(revenue)
     end
   end
 end

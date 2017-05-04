@@ -64,7 +64,7 @@ RSpec.describe Merchant do
 
       revenue = merchant.revenue
 
-      expect(revenue).to eq 30000
+      expect(revenue).to eq '300.00'
     end
   end
 end
