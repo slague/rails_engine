@@ -157,15 +157,21 @@ describe 'Merchants API' do
 
     before do
       transaction = create :transaction
+      transaction2 = create :transaction
       invoice = create :invoice
+      invoice2 = create :invoice, created_at: DateTime.now
       invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
       invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
       invoice.transactions << transaction
+      invoice2.transactions << transaction2
+      test_date = DateTime.new(2017, 3, 31, 1, 2, 3)
 
-      @merchant1 = create :merchant, invoices: [invoice]
+      @merchant1 = create :merchant, invoices: [invoice, invoice2]
 
       transaction = create :transaction
-      invoice = create :invoice
+      invoice = create :invoice, created_at: test_date
       invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
       invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
       invoice.transactions << transaction
@@ -173,7 +179,7 @@ describe 'Merchants API' do
       @merchant2 = create :merchant, invoices: [invoice]
 
       transaction = create :transaction
-      invoice = create :invoice
+      invoice = create :invoice, created_at: test_date
       invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
       invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
       invoice.transactions << transaction
@@ -191,19 +197,35 @@ describe 'Merchants API' do
         Merchant.find(merchant['id'])
       end
 
+      expect(top_merchants).to include merchant1
       expect(top_merchants).to include merchant3
-      expect(top_merchants).to include merchant2
-      expect(top_merchants).to_not include merchant1
+      expect(top_merchants).to_not include merchant2
     end
 
     it 'returns a merchants revenue' do
-      get "/api/v1/merchants/#{merchant1.id}/revenue.json"
+      get "/api/v1/merchants/#{merchant2.id}/revenue.json"
 
       expect(response).to be_success
 
       result = JSON.parse(response.body)
 
-      expect(result).to eq merchant1.revenue
+      expect(result['id']).to eq merchant2.id
+      expect(result['name']).to eq merchant2.name
+      expect(result['revenue']).to eq merchant2.revenue
     end
+
+    it 'returns a merchants revenue on a given day' do
+
+      get "/api/v1/merchants/#{merchant1.id}/revenue?date=2017-05-01"
+
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+
+      expect(result['name']).to eq(merchant1.name)
+      expect(result['revenue']).to eq(30000)
+      expect(result['id']).to eq(merchant1.id)
+    end
+
   end
 end

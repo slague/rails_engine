@@ -4,7 +4,8 @@ class Merchant < ActiveRecord::Base
 
   validates :name, :created_at, :updated_at, presence: true
 
-  def revenue
+  def revenue(date = nil)
+    invoices = date ? self.invoices.where("DATE(invoices.created_at) = ?", date) : self.invoices
     invoices.joins(:transactions).where('transactions.result = ?', 'success').joins(:invoice_items).sum('invoice_items.quantity * invoice_items.unit_price')
   end
 
