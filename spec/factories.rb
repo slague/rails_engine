@@ -3,6 +3,7 @@ FactoryGirl.define do
     sequence(:name) do |n|
       "Merchant ##{n}"
     end
+    invoices []
     created_at DateTime.new(2017, 5, 1, 20, 13, 20)
     updated_at DateTime.new(2017, 5, 1, 20, 13, 20)
   end
@@ -33,6 +34,7 @@ FactoryGirl.define do
     customer
     merchant
     status 'success'
+    invoice_items []
     created_at DateTime.new(2017, 5, 1, 20, 13, 20)
     updated_at DateTime.new(2017, 5, 1, 20, 13, 20)
   end

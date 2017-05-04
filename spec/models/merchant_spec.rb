@@ -46,4 +46,20 @@ RSpec.describe Merchant do
       expect(merchant.items).to include(items.last)
     end
   end
+
+  context 'instance methods' do
+    it 'knows its revenue' do
+      invoice1 = create :invoice
+      invoice1.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice1.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice2 = create :invoice
+      invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      merchant = create :merchant, invoices: [invoice1, invoice2]
+
+      revenue = merchant.revenue
+
+      expect(revenue).to eq 60000
+    end
+  end
 end
