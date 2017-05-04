@@ -11,6 +11,8 @@ class SeedFile
   def import
     file_path = Rails.root.to_s + '/db/csv/' + path + '.csv'
     CSV.foreach(file_path, headers: true) do |row|
+      # byebug
+      row.delete 'credit_card_expiration_date' if row.has_key?('credit_card_expiration_date')
       model.create!(row.to_h)
     end
     puts "#{model.count} #{path.titleize} populated"
