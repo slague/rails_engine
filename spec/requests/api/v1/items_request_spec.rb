@@ -2,16 +2,14 @@ require 'rails_helper'
 
 describe 'Item API' do
   context 'record end points' do
-    attr_reader :item1, :item2, :merchant, :time
+    attr_reader :time
 
     before do
       @time = DateTime.new(2018, 5, 1, 20, 13, 20)
-      @merchant = create(:merchant)
-      @item1, @item2 = create_list(:item, 2)
-      merchant.items << [item1, item2]
     end
 
     it 'returns all items' do
+      item1, item2 = create_list(:item, 2)
       get '/api/v1/items.json'
       expect(response).to be_success
 
@@ -31,6 +29,7 @@ describe 'Item API' do
     end
 
     it 'returns one item' do
+      item1, item2 = create_list(:item, 2)
       get "/api/v1/items/#{item1.id}.json"
 
       expect(response).to be_success
@@ -80,25 +79,13 @@ describe 'Item API' do
 
       result = JSON.parse(response.body)
 
-      expect(result['description']).to eq(description)
+      expect(result['description']).to eq(description.downcase)
 
       get '/api/v1/items/find?description=' + CGI.escape(description.titleize)
 
       result = JSON.parse(response.body)
-      
-      expect(result['description']).to eq('pickle')
-    end
 
-    it 'can find an item by description fragment' do
-      description = 'The finest artisan friendship bracelets'
-      create :item, description: description
-      create :item
-
-      get '/api/v1/items/find?description=friendship'
-
-      result = JSON.parse(response.body)
-
-      expect(result['description']).to eq(description)
+      expect(result['description']).to eq(description.downcase)
     end
 
     it 'can find an item by unit price' do
@@ -177,36 +164,15 @@ describe 'Item API' do
       get '/api/v1/items/find_all?description=' + CGI.escape(description)
 
       result = JSON.parse(response.body)
-      expect(result[0]['description']).to eq description
-      expect(result[1]['description']).to eq description
+      expect(result[0]['description']).to eq description.downcase
+      expect(result[1]['description']).to eq description.downcase
       expect(result.count).to eq 2
 
       get '/api/v1/items/find_all?description=' + CGI.escape(description.titleize)
 
       result = JSON.parse(response.body)
-      expect(result[0]['description']).to eq description
-      expect(result[1]['description']).to eq description
-      expect(result.count).to eq 2
-    end
-
-    it 'can find all items by description fragment' do
-      description = 'I dont want to be creative'
-      create :item, description: description
-      create :item, description: description
-      create :item, description: 'a different description'
-
-      get '/api/v1/items/find_all?description=creative'
-
-      result = JSON.parse(response.body)
-      expect(result[0]['description']).to eq description
-      expect(result[1]['description']).to eq description
-      expect(result.count).to eq 2
-
-      get '/api/v1/items/find_all?description=CREATiVe'
-
-      result = JSON.parse(response.body)
-      expect(result[0]['description']).to eq description
-      expect(result[1]['description']).to eq description
+      expect(result[0]['description']).to eq description.downcase
+      expect(result[1]['description']).to eq description.downcase
       expect(result.count).to eq 2
     end
 
