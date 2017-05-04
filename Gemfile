@@ -32,6 +32,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'database_cleaner'
   gem 'factory_girl_rails'
+  gem 'awesome_print'
 end
 
 group :test do
