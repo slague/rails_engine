@@ -160,10 +160,10 @@ describe 'Merchants API' do
       transaction2 = create :transaction
       invoice = create :invoice
       invoice2 = create :invoice, created_at: DateTime.now
-      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
-      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice.invoice_items << create(:invoice_item, quantity: 1, unit_price: 5000)
+      invoice.invoice_items << create(:invoice_item, quantity: 2, unit_price: 5000)
       invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
-      invoice2.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
+      invoice2.invoice_items << create(:invoice_item, quantity: 4, unit_price: 5000)
       invoice.transactions << transaction
       invoice2.transactions << transaction2
       test_date = DateTime.new(2017, 3, 31, 1, 2, 3)
@@ -172,16 +172,16 @@ describe 'Merchants API' do
 
       transaction = create :transaction
       invoice = create :invoice, created_at: test_date
-      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5000)
-      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
+      invoice.invoice_items << create(:invoice_item, quantity: 5, unit_price: 5000)
+      invoice.invoice_items << create(:invoice_item, quantity: 6, unit_price: 5001)
       invoice.transactions << transaction
 
       @merchant2 = create :merchant, invoices: [invoice]
 
       transaction = create :transaction
       invoice = create :invoice, created_at: test_date
-      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
-      invoice.invoice_items << create(:invoice_item, quantity: 3, unit_price: 5001)
+      invoice.invoice_items << create(:invoice_item, quantity: 7, unit_price: 5001)
+      invoice.invoice_items << create(:invoice_item, quantity: 8, unit_price: 5001)
       invoice.transactions << transaction
 
       @merchant3 = create :merchant, invoices: [invoice]
@@ -198,9 +198,9 @@ describe 'Merchants API' do
         Merchant.find(merchant['id'])
       end
 
-      expect(top_merchants).to include merchant1
-      expect(top_merchants).to include merchant3
-      expect(top_merchants).to_not include merchant2
+      expect(top_merchants.first).to eq merchant3
+      expect(top_merchants.last).to eq merchant2
+      expect(top_merchants).to_not include merchant1
     end
 
     it 'returns a merchants revenue' do
@@ -220,7 +220,7 @@ describe 'Merchants API' do
 
       result = JSON.parse(response.body)
 
-      expect(result['revenue']).to eq('300.00')
+      expect(result['revenue']).to eq('150.00')
     end
 
     it 'returns every merchants revenue on a given date' do
@@ -231,6 +231,18 @@ describe 'Merchants API' do
 
       result = JSON.parse(response.body)
       expect(result['revenue']).to eq(revenue)
+    end
+
+    it 'returns merchants that sell the most items' do
+      get '/api/v1/merchants/most_items?quantity=2'
+
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+
+      expect(result.count).to eq 2
+      expect(result.first).to eq merchant3
+      expect(result.last).to eq merchant2
     end
   end
 end
