@@ -12,4 +12,9 @@ class Merchant < ActiveRecord::Base
   def self.order_by_revenue(quantity = Merchant.count)
     self.joins(:invoices).joins('JOIN transactions ON invoices.id = transactions.invoice_id').where('transactions.result = ?', 'success').joins('JOIN invoice_items ON invoice_items.invoice_id = invoices.id').group('merchants.id').order('SUM(invoice_items.quantity * invoice_items.unit_price) DESC').limit(quantity)
   end
+
+  def self.revenue_on_day(date)
+    self.joins(:invoices).where("DATE(invoices.created_at) = ?", date).joins('JOIN transactions ON invoices.id = transactions.invoice_id').where('transactions.result = ?', 'success').joins('JOIN invoice_items ON invoice_items.invoice_id =
+    invoices.id').group('merchants.id').order('SUM(invoice_items.quantity * invoice_items.unit_price) DESC')
+  end
 end

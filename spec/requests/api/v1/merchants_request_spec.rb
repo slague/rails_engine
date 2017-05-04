@@ -185,6 +185,7 @@ describe 'Merchants API' do
       invoice.transactions << transaction
 
       @merchant3 = create :merchant, invoices: [invoice]
+
     end
 
     it 'returns the top x merchants ranked by total revenue' do
@@ -227,5 +228,17 @@ describe 'Merchants API' do
       expect(result['id']).to eq(merchant1.id)
     end
 
+    it 'returns every merchants revenue on a given date' do
+      get '/api/v1/merchants/most_revenue?date=2017-03-31'
+
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+      expect(result.count).to eq(2)
+      expect(result.first['name']).to eq(merchant3.name)
+      expect(result.last['name']).to eq(merchant2.name)
+      expect(result.first['revenue']).to eq(merchant3.revenue)
+      expect(result.last['revenue']).to eq(merchant2.revenue)
+    end
   end
 end
