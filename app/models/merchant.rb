@@ -26,7 +26,12 @@ class Merchant < ActiveRecord::Base
   end
 
   def self.most_items(quantity = Merchant.count)
-    Merchant.joins(:items).joins(:invoice_items).group('merchants.id').joins('JOIN transactions ON transactions.invoice_id = invoices.id').order('SUM(invoice_items.quantity) DESC').limit(quantity)
+    Merchant.find_by_sql("SELECT merchants.*, sum(invoice_items.quantity) AS total_items
+                          FROM merchants JOIN invoices ON merchants.id = invoices.merchant_id
+                          JOIN transactions ON transactions.invoice_id = invoices.id
+                          JOIN invoice_items ON invoices.id = invoice_items.invoice_id
+                          WHERE transactions.result = 'success'
+                          GROUP BY merchants.id ORDER BY total_items DESC;").first(quantity)
   end
 
   private

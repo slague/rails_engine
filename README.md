@@ -1,24 +1,23 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Steps to take to run this application and its tests.
 
 Things you may want to cover:
 
-* Ruby version
+* Clone down our project (rails_engine)
 
-* System dependencies
+* Clone down the spec harness (rales_engine_spec_harness)
 
-* Configuration
+* Run bundle install
 
-* Database creation
+* Create the database (rake db:create) and migrate (rake db:migrate)
 
-* Database initialization
+* Load the csv files (rake seed:seed_data)
 
-* How to run the test suite
+* Start the the rails server and keep it running
 
-* Services (job queues, cache servers, search engines, etc.)
+* Open another terminal window, and cd into the spec harness folder
 
-* Deployment instructions
+* While the server is running, run rake from the spec harness terminal window
 
-* ...
+* Watch tests pass (or fail)...
