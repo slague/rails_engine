@@ -11,7 +11,8 @@ class SeedFile
   def import
     file_path = Rails.root.to_s + '/db/csv/' + path + '.csv'
     CSV.foreach(file_path, headers: true) do |row|
-      row.delete('id')
+      # byebug
+      row.delete 'credit_card_expiration_date' if row.has_key?('credit_card_expiration_date')
       model.create!(row.to_h)
     end
     puts "#{model.count} #{path.titleize} populated"
@@ -24,5 +25,10 @@ namespace :seed do
     DatabaseCleaner.clean
 
     SeedFile.new('merchants', Merchant).import
+    SeedFile.new('items', Item).import
+    SeedFile.new('customers', Customer).import
+    SeedFile.new('invoices', Invoice).import
+    SeedFile.new('invoice_items', InvoiceItem).import
+    SeedFile.new('transactions', Transaction).import
   end
 end

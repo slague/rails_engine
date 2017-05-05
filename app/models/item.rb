@@ -1,11 +1,10 @@
 class Item < ActiveRecord::Base
-  before_save do
-    description.downcase!
-  end
   validates :name, :description, :unit_price, presence: true
 
   belongs_to :merchant
   has_many :invoice_items
+  has_many :invoices, through: :invoice_items
+
 
   def self.most_items(quantity = Item.count)
     Item.find_by_sql("SELECT items.*, sum(invoice_items.quantity) AS total_items

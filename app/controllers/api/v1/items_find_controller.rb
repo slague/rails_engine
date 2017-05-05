@@ -8,9 +8,9 @@ class Api::V1::ItemsFindController < ApplicationController
   end
 
   private
-  
+
   def item_params
     params = clean_params
-    params.permit(:id, :name, :description, :unit_price, :created_at, :updated_at)
+    params.permit(:id, :name, :description, :unit_price, :created_at, :updated_at, :merchant_id)
   end
 end
