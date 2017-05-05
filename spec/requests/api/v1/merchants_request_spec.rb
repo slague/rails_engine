@@ -185,7 +185,6 @@ describe 'Merchants API' do
       invoice.transactions << transaction
 
       @merchant3 = create :merchant, invoices: [invoice]
-
     end
 
     it 'returns the top x merchants ranked by total revenue' do
@@ -240,9 +239,12 @@ describe 'Merchants API' do
 
       result = JSON.parse(response.body)
 
+      byebug
       expect(result.count).to eq 2
-      expect(result.first).to eq merchant3
-      expect(result.last).to eq merchant2
+      expect(result.first['id']).to eq merchant3.id
+      expect(result.first['name']).to eq merchant3.name
+      expect(result.last['id']).to eq merchant2.id
+      expect(result.last['name']).to eq merchant2.name
     end
   end
 end

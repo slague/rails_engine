@@ -1,14 +1,18 @@
 class Merchant < ActiveRecord::Base
   has_many :items
   has_many :invoices
+  has_many :invoice_items, through: :invoices
 
   validates :name, :created_at, :updated_at, presence: true
-
 
   def revenue(date = nil)
     invoices = date ? self.invoices.where("DATE(invoices.created_at) = ?", date) : self.invoices
     rev = invoices.joins(:transactions).where('transactions.result = ?', 'success').joins(:invoice_items).sum('invoice_items.quantity * invoice_items.unit_price')
     num_to_currency(rev)
+  end
+
+  def valid_invoice_items
+    invoice_items.joins('JOIN transactions ON invoices.id = transactions.invoice_id').where(transactions: {result: 'success'})
   end
 
   def self.order_by_revenue(quantity = Merchant.count)
@@ -19,6 +23,10 @@ class Merchant < ActiveRecord::Base
     rev = self.joins(:invoices).where("DATE(invoices.created_at) = ?", date).joins('JOIN transactions ON invoices.id = transactions.invoice_id').where('transactions.result = ?', 'success').joins('JOIN invoice_items ON invoice_items.invoice_id =
     	invoices.id').sum('invoice_items.quantity * invoice_items.unit_price')
     self.num_to_currency(rev)
+  end
+
+  def self.most_items(quantity = Merchant.count)
+    Merchant.joins(:items).joins(:invoice_items).group('merchants.id').joins('JOIN transactions ON transactions.invoice_id = invoices.id').order('SUM(invoice_items.quantity) DESC').limit(quantity)
   end
 
   private
