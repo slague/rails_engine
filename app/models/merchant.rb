@@ -6,7 +6,7 @@ class Merchant < ActiveRecord::Base
   validates :name, :created_at, :updated_at, presence: true
 
   def revenue(date = nil)
-    invoices = date ? self.invoices.where("DATE(invoices.created_at) = ?", date) : self.invoices
+    invoices = date ? self.invoices.where("invoices.created_at = ?", DateTime.parse(date)) : self.invoices
     rev = invoices.joins(:transactions).where('transactions.result = ?', 'success').joins(:invoice_items).sum('invoice_items.quantity * invoice_items.unit_price')
     num_to_currency(rev)
   end
@@ -20,8 +20,7 @@ class Merchant < ActiveRecord::Base
   end
 
   def self.revenue_on_day(date)
-    rev = self.joins(:invoices).where("DATE(invoices.created_at) = ?", date).joins('JOIN transactions ON invoices.id = transactions.invoice_id').where('transactions.result = ?', 'success').joins('JOIN invoice_items ON invoice_items.invoice_id =
-    	invoices.id').sum('invoice_items.quantity * invoice_items.unit_price')
+    rev = self.joins(:invoices).where("invoices.created_at = ?", DateTime.parse(date)).joins('JOIN transactions ON invoices.id = transactions.invoice_id').where('transactions.result = ?', 'success').joins('JOIN invoice_items ON invoice_items.invoice_id = invoices.id').sum('invoice_items.quantity * invoice_items.unit_price')
     self.num_to_currency(rev)
   end
 
@@ -44,3 +43,4 @@ class Merchant < ActiveRecord::Base
     sprintf '%.2f', num / 100.0
   end
 end
+
