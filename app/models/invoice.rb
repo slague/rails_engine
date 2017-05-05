@@ -3,6 +3,7 @@ class Invoice < ActiveRecord::Base
   belongs_to :customer
 
   has_many :invoice_items
+  has_many :items, through: :invoice_items
   has_many :transactions
 
   validates :status, :created_at, :updated_at, presence: true

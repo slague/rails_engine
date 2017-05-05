@@ -4,4 +4,5 @@ class Customer < ActiveRecord::Base
     last_name.downcase!
   end
   has_many :invoices
+  has_many :transactions, through: :invoices
 end
