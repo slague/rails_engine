@@ -34,6 +34,19 @@ class Merchant < ActiveRecord::Base
                           GROUP BY merchants.id ORDER BY total_items DESC;").first(quantity)
   end
 
+
+  def self.top_merchant(customer)
+    Merchant.find_by_sql("SELECT merchants.*, count(transactions.invoice_id) AS count
+                          FROM merchants
+                          JOIN invoices
+                          ON invoices.merchant_id = merchants.id
+                          JOIN transactions
+                          ON transactions.invoice_id = invoices.id JOIN customers ON invoices.customer_id = customers.id
+                          WHERE transactions.result = 'success'
+                          AND customers.id = #{customer}
+                          GROUP BY merchants.id ORDER BY count DESC;").first
+  end
+
   private
 
   def self.num_to_currency(num)
