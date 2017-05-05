@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       get '/items/most_items', to: 'items_most_items#index'
       get '/items/:id/merchant', to: 'item_merchants#show'
       get '/items/:id/invoice_items', to: 'item_invoice_items#index'
+      get '/items/most_revenue', to: 'items_most_revenue#index'
 
       get '/merchants/find', to: 'merchants#show'
       get '/merchants/find_all', to: 'merchants#index'
